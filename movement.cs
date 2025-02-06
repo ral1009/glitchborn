@@ -4,17 +4,16 @@ public partial class movement : CharacterBody2D
 {
     [Export] private float Speed = 400.0f;
     [Export] private float Acceleration = 3000.0f;
-    [Export] private float MaxJumpForce = -1000.0f;  
-    [Export] private float Gravity = 700.0f;
+    [Export] private float MaxJumpForce = -700.0f;  
+    [Export] private float Gravity = 1500.0f;
     [Export] private bool Ice = false;
 
     private bool isJumping = false;  
-    private bool wasJumpButtonPressed = false; // Track if the jump button was held after landing
+    private bool wasJumpButtonPressed = false;
     private float currentJumpForce = 0.0f;  
 
     public override void _PhysicsProcess(double delta)
     {
-        // Apply gravity if not on the floor
         if (!IsOnFloor())
         {
             Velocity = new Vector2(Velocity.X, Velocity.Y + Gravity * (float)delta);
@@ -28,7 +27,6 @@ public partial class movement : CharacterBody2D
             isJumping = false;  
         }
 
-        // Get horizontal movement input
         float direction = Input.GetAxis("a", "d");
 
         if (direction != 0)
@@ -43,21 +41,17 @@ public partial class movement : CharacterBody2D
         {
             Velocity = new Vector2(Mathf.MoveToward(Velocity.X, 0, Speed * (float)delta), Velocity.Y);
         }
-
-        // Check if the jump button is held
         bool isJumpButtonPressed = Input.IsActionPressed("w");
 
-        // Prevent immediate re-jump after landing
         if (IsOnFloor() && isJumpButtonPressed)
         {
-            if (!wasJumpButtonPressed)  // Only jump if the button was released before pressing again
+            if (!wasJumpButtonPressed)
             {
                 isJumping = true;
                 currentJumpForce = -10.0f;
             }
         }
 
-        // Handle variable jump height
         if (isJumping && isJumpButtonPressed && currentJumpForce > MaxJumpForce)
         {
             currentJumpForce -= 50.0f;
@@ -69,7 +63,7 @@ public partial class movement : CharacterBody2D
             isJumping = false;
         }
 
-        wasJumpButtonPressed = isJumpButtonPressed;  // Update jump button state
+        wasJumpButtonPressed = isJumpButtonPressed;  
 
         MoveAndSlide();
     }
