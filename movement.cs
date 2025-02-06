@@ -4,30 +4,28 @@ public partial class movement : CharacterBody2D
 {
     [Export] private float Speed = 400.0f;
     [Export] private float Acceleration = 3000.0f;
-    [Export] private float JumpForce = -500.0f;  // Start with a small jump force
-
-    [Export] private float MaxJumpForce = -700.0f;  // Maximum jump force (negative to go upwards)
+    [Export] private float MaxJumpForce = -1000.0f;  
     [Export] private float Gravity = 700.0f;
-
     [Export] private bool Ice = false;
 
-    private bool isJumping = false;  // Track if the player is currently jumping
+    private bool isJumping = false;  
+    private bool wasJumpButtonPressed = false; // Track if the jump button was held after landing
+    private float currentJumpForce = 0.0f;  
 
     public override void _PhysicsProcess(double delta)
     {
         // Apply gravity if not on the floor
         if (!IsOnFloor())
         {
-            // Continue adding gravity to the vertical velocity (Y)
             Velocity = new Vector2(Velocity.X, Velocity.Y + Gravity * (float)delta);
         }
         else
         {
-            // Reset vertical velocity to 0 when on the floor (prevents bouncing or floating)
             if (Velocity.Y > 0)
             {
-                Velocity = new Vector2(Velocity.X, 0);  // Stops downward motion when landing
+                Velocity = new Vector2(Velocity.X, 0);
             }
+            isJumping = false;  
         }
 
         // Get horizontal movement input
@@ -35,45 +33,44 @@ public partial class movement : CharacterBody2D
 
         if (direction != 0)
         {
-            // Apply acceleration
             Velocity = new Vector2(Mathf.MoveToward(Velocity.X, direction * Speed, Acceleration * (float)delta), Velocity.Y);
         }
-        else if (Ice == false)
+        else if (!Ice)
         {
-            // Instantly stop when no keys are pressed
             Velocity = new Vector2(0, Velocity.Y);
         }
-        else 
+        else
         {
             Velocity = new Vector2(Mathf.MoveToward(Velocity.X, 0, Speed * (float)delta), Velocity.Y);
         }
 
-        // Handle jumping: only when the player is on the floor
-        if (Input.IsActionPressed("w") && IsOnFloor())
+        // Check if the jump button is held
+        bool isJumpButtonPressed = Input.IsActionPressed("w");
+
+        // Prevent immediate re-jump after landing
+        if (IsOnFloor() && isJumpButtonPressed)
         {
-            // Start the jump if the player is on the floor and presses the jump key
-            if (!isJumping)
+            if (!wasJumpButtonPressed)  // Only jump if the button was released before pressing again
             {
-                isJumping = true;  // Start jumping
-                JumpForce = -500.0f;  // Reset jump force to start the jump
+                isJumping = true;
+                currentJumpForce = -10.0f;
             }
-
-            // Gradually increase the jump force while the key is held, until the max jump force
-            if (JumpForce < MaxJumpForce)
-            {
-                JumpForce = Mathf.MoveToward(JumpForce, MaxJumpForce, 10 * (float)delta);  // Increase jump force
-            }
-
-            // Apply the jump force (only vertical component changes)
-            Velocity = new Vector2(Velocity.X, JumpForce);
         }
-        else if (Input.IsActionJustReleased("w") || !IsOnFloor())
+
+        // Handle variable jump height
+        if (isJumping && isJumpButtonPressed && currentJumpForce > MaxJumpForce)
         {
-            // Stop increasing jump force if the key is released or the player is not on the floor
+            currentJumpForce -= 50.0f;
+            Velocity = new Vector2(Velocity.X, currentJumpForce);
+        }
+
+        if (Input.IsActionJustReleased("w") || currentJumpForce < MaxJumpForce)
+        {
             isJumping = false;
         }
 
-        // Move the character
+        wasJumpButtonPressed = isJumpButtonPressed;  // Update jump button state
+
         MoveAndSlide();
     }
 }

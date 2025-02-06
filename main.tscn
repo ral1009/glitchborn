@@ -163,6 +163,8 @@ scale = Vector2(3, 3)
 position = Vector2(197, 151)
 collision_layer = 2
 script = ExtResource("2_t2sp7")
+MaxJumpForce = -600.0
+Gravity = 1500.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player/CharacterBody2D"]
 shape = SubResource("RectangleShape2D_p2omn")
