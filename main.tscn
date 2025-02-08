@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=4 uid="uid://d3hljj17wxpwt"]
+[gd_scene load_steps=9 format=4 uid="uid://d3hljj17wxpwt"]
 
 [ext_resource type="Texture2D" uid="uid://d1mwbmystgd2b" path="res://icon.svg" id="1_ghorg"]
 [ext_resource type="Texture2D" uid="uid://cvoul867jfti2" path="res://spritesheet_tiles.png" id="1_q34pl"]
@@ -147,6 +147,8 @@ sources/0 = SubResource("TileSetAtlasSource_swntt")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p2omn"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_blrea"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s66yn"]
 size = Vector2(1163, 105)
 
@@ -159,10 +161,12 @@ tile_set = SubResource("TileSet_5fxfh")
 [node name="player" type="Node2D" parent="."]
 scale = Vector2(3, 3)
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="player"]
+[node name="CharacterBody2D" type="CharacterBody2D" parent="player" node_paths=PackedStringArray("Attack")]
 position = Vector2(197, 151)
 collision_layer = 2
 script = ExtResource("2_t2sp7")
+Gravity = 2000.0
+Attack = NodePath("Attack")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player/CharacterBody2D"]
 shape = SubResource("RectangleShape2D_p2omn")
@@ -174,6 +178,15 @@ texture = ExtResource("1_ghorg")
 
 [node name="Camera2D" type="Camera2D" parent="player/CharacterBody2D"]
 position = Vector2(0, 3.05176e-05)
+
+[node name="Attack" type="Area2D" parent="player/CharacterBody2D"]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player/CharacterBody2D/Attack"]
+position = Vector2(20, 0.333333)
+shape = SubResource("RectangleShape2D_blrea")
+
+[node name="Sprite2D" type="Sprite2D" parent="player/CharacterBody2D/Attack"]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 visible = false

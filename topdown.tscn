@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://b3r8s1g1re6nh"]
+
+[ext_resource type="Script" path="res://topdown.cs" id="1_ggaaf"]
+[ext_resource type="Texture2D" uid="uid://d1mwbmystgd2b" path="res://icon.svg" id="2_ksovo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ivyst"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_m2xnb"]
+normal = Vector2(0.999998, -0.00196078)
+
+[node name="topdown" type="Node2D"]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+script = ExtResource("1_ggaaf")
+Speed = 400
+DashSpeed = 1000
+DashCooldown = 0.2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(327, 237)
+shape = SubResource("RectangleShape2D_ivyst")
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+position = Vector2(327, 237)
+scale = Vector2(0.15625, 0.15625)
+texture = ExtResource("2_ksovo")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2, -128)
+shape = SubResource("WorldBoundaryShape2D_m2xnb")

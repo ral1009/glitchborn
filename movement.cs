@@ -1,4 +1,5 @@
 using Godot;
+using System.Threading.Tasks;
 
 public partial class movement : CharacterBody2D
 {
@@ -7,6 +8,8 @@ public partial class movement : CharacterBody2D
     [Export] private float MaxJumpForce = -700.0f;  
     [Export] private float Gravity = 1500.0f;
     [Export] private bool Ice = false;
+
+    [Export] private Area2D Attack;
 
     private bool isJumping = false;  
     private bool wasJumpButtonPressed = false;
@@ -65,6 +68,19 @@ public partial class movement : CharacterBody2D
 
         wasJumpButtonPressed = isJumpButtonPressed;  
 
+        if (Input.IsActionJustPressed("attack"))
+        {
+            Attack.Visible = true;
+            GD.Print("meow");
+            _ = Delay(2.0f);
+        }
+        
         MoveAndSlide();
+    }
+
+    private async Task Delay(float delaytime) 
+    {
+            await ToSignal(GetTree().CreateTimer(delaytime), "timeout");
+            Attack.Visible = false;
     }
 }
