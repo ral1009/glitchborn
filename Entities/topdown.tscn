@@ -1,0 +1,104 @@
+[gd_scene load_steps=14 format=3 uid="uid://b8fwncjdgvfqf"]
+
+[ext_resource type="Script" path="res://Scripts/topdown.cs" id="1_b1yh2"]
+[ext_resource type="Texture2D" uid="uid://d1mwbmystgd2b" path="res://Sprites/icon.svg" id="2_em5u5"]
+[ext_resource type="Script" path="res://Scripts/Gun.cs" id="3_jxge0"]
+[ext_resource type="PackedScene" uid="uid://c5efssvu6ng17" path="res://Entities/Bullet.tscn" id="4_o6imw"]
+[ext_resource type="Script" path="res://Scripts/EnemyGun.cs" id="5_buddv"]
+[ext_resource type="Script" path="res://Scripts/Boss.cs" id="5_ex52n"]
+[ext_resource type="PackedScene" uid="uid://c55h3654xhu6g" path="res://Entities/EnemyBullet.tscn" id="7_ts860"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dc2ew"]
+size = Vector2(34, 34)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xiuum"]
+size = Vector2(26.7614, 25.2)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_dri2v"]
+normal = Vector2(0.999948, 0.0102036)
+distance = -0.0420261
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_ey3x3"]
+normal = Vector2(-0.99998, 0.00632899)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_yren6"]
+normal = Vector2(0.0147043, 0.999892)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_d4rmn"]
+distance = -1080.0
+
+[node name="Node2D" type="Node2D"]
+
+[node name="player" type="CharacterBody2D" parent="."]
+position = Vector2(445, 275)
+collision_mask = 2
+script = ExtResource("1_b1yh2")
+Speed = 400
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player"]
+shape = SubResource("RectangleShape2D_dc2ew")
+
+[node name="Icon" type="Sprite2D" parent="player"]
+position = Vector2(4.76837e-07, -4.76837e-07)
+scale = Vector2(0.2655, 0.2655)
+texture = ExtResource("2_em5u5")
+
+[node name="Gun" type="Node2D" parent="player"]
+script = ExtResource("3_jxge0")
+bullet_tscn = ExtResource("4_o6imw")
+
+[node name="boss" type="CharacterBody2D" parent="." node_paths=PackedStringArray("player")]
+position = Vector2(920, 438)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("5_ex52n")
+player = NodePath("../player")
+speed = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="boss"]
+position = Vector2(-0.5, -6.10352e-05)
+scale = Vector2(4.67091, 5)
+shape = SubResource("RectangleShape2D_xiuum")
+
+[node name="Sprite2D" type="Sprite2D" parent="boss"]
+texture = ExtResource("2_em5u5")
+
+[node name="BossGun" type="Node2D" parent="boss" node_paths=PackedStringArray("Boss")]
+script = ExtResource("5_buddv")
+bullet_tscn = ExtResource("7_ts860")
+bps = 12.0
+Boss = NodePath("..")
+health = 150.0
+
+[node name="Boundaries" type="Node2D" parent="."]
+
+[node name="Left" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/Left"]
+shape = SubResource("WorldBoundaryShape2D_dri2v")
+
+[node name="Right" type="StaticBody2D" parent="Boundaries"]
+position = Vector2(1920, 0)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/Right"]
+shape = SubResource("WorldBoundaryShape2D_ey3x3")
+
+[node name="Top" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/Top"]
+shape = SubResource("WorldBoundaryShape2D_yren6")
+
+[node name="Bottom" type="StaticBody2D" parent="Boundaries"]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/Bottom"]
+shape = SubResource("WorldBoundaryShape2D_d4rmn")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.830335, 0.830335, 0.830335, 1)
